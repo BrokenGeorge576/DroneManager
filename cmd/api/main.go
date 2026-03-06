@@ -3,6 +3,7 @@ package main
 import (
 	"DroneManager/internal/database"
 	"DroneManager/internal/handlers"
+	"DroneManager/internal/repository"
 	"DroneManager/pb"
 	"fmt"
 	"log"
@@ -20,7 +21,11 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	droneServer := &handlers.DroneGRPCServer{}
+	repoReal := repository.NewMongoDroneRepo()
+	droneServer := &handlers.DroneGRPCServer{
+		Repo: repoReal,
+	}
+
 	pb.RegisterDroneServiceServer(grpcServer, droneServer)
 	reflection.Register(grpcServer)
 

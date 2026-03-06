@@ -13,7 +13,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func CreateDrone(drone models.Drone) (interface{}, error) {
+type MongoDroneRepo struct{}
+
+func NewMongoDroneRepo() *MongoDroneRepo {
+	return &MongoDroneRepo{}
+}
+
+func (r *MongoDroneRepo) CreateDrone(drone models.Drone) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -31,7 +37,7 @@ func CreateDrone(drone models.Drone) (interface{}, error) {
 	return result.InsertedID, err
 }
 
-func GetAllDrones() ([]models.Drone, error) {
+func (r *MongoDroneRepo) GetAllDrones() ([]models.Drone, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -56,7 +62,7 @@ func GetAllDrones() ([]models.Drone, error) {
 	return drones, nil
 }
 
-func UpdateDrone(idString string, updateData models.Drone) (int64, error) {
+func (r *MongoDroneRepo) UpdateDrone(idString string, updateData models.Drone) (int64, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
