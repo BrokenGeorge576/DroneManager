@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package drone;
+
+option go_package = "./pb";
+
+service DroneService {
+  rpc CreateDrone(CreateDroneRequest) returns (DroneResponse);
+  rpc GetDrones(Empty) returns (DroneListResponse);
+  rpc UpdateDrone(UpdateDroneRequest) returns (DroneResponse);
+}
+
+message CreateDroneRequest {
+  string model = 1;
+  string serial = 2;
+  int32 charge = 3;
+}
+
+message UpdateDroneRequest {
+  string id = 1;
+  string status = 2;
+  int32 charge = 3;
+}
+
+message DroneResponse {
+  string id = 1;
+  string message = 2;
+}
+
+message DroneListResponse {
+  repeated DroneItem drones = 1;
+}
+
+message DroneItem {
+  string id = 1;
+  string model = 2;
+  string status = 3;
+}
+
+message Empty {}
