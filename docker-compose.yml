@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    tmpfs:
+      - /data/db
+
+  tester:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+    depends_on:
+      mongodb:
+        condition: service_started
+    command: >
+      sh -c "
+      echo 'Esperando MongoDB...' &&
+      sleep 3 &&
+      echo 'Corriendo Nivel 1: Pruebas Unitarias...' &&
+      go test ./internal/handlers -v &&
+      echo 'Corriendo Nivel 2: Pruebas de Integracion...' &&
+      go test ./internal/repository -tags=integration -v
+      "
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "50051:50051"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+    depends_on:
+      mongodb:
+        condition: service_started
+      tester:
+        condition: service_completed_successfully
+    command: go run cmd/api/main.go
