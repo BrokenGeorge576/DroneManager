@@ -9,7 +9,7 @@ import (
 )
 
 type DroneRepository interface {
-	CreateDrone(drone models.Drone) (interface{}, error)
+	CreateDrone(drone models.Drone) (any, error)
 	GetAllDrones() ([]models.Drone, error)
 	UpdateDrone(idString string, updateData models.Drone) (int64, error)
 }
